@@ -3,6 +3,8 @@ const fs = require("fs");
 require("dotenv").config();
 const BASE_URL = process.env.REACT_APP_BACKEND_API;
 
+console.log("first");
+
 // const schema = Joi.object({
 //   description: Joi.string().required(),
 //   height: Joi.number().integer().required(),
@@ -21,6 +23,8 @@ pokemons.map((pokemon) => {
     pokemonNames.push(pokemon.name);
   }
 });
+
+//////////dsadasdasdasdas
 
 const generatePokeDescription = async () => {
   const descriptionData = await csv().fromFile("./description.csv");
