@@ -1,6 +1,7 @@
 const csv = require("csvtojson");
 const fs = require("fs");
-const { BASE_URL } = require("../app/config");
+require("dotenv").config();
+const BASE_URL = process.env.REACT_APP_BACKEND_API;
 
 // const schema = Joi.object({
 //   description: Joi.string().required(),
@@ -124,7 +125,7 @@ const createDatabase = async () => {
       return pokemon;
     });
 
-    console.log("pokemon", pokemons);
+    // console.log("pokemon", pokemons);
 
     let newData = { data: pokemons, totalPokemons };
 
