@@ -125,19 +125,20 @@ router.get("/", (req, res, next) => {
  */
 
 router.get("/:pokemonId", (req, res, next) => {
-  let pokemonIds = [];
+  // let pokemonIds = [];
 
-  let db = fs.readFileSync("db.json", "utf-8");
+  // let db = fs.readFileSync("db.json", "utf-8");
 
-  db = JSON.parse(db);
+  // db = JSON.parse(db);
 
-  let { data: pokemons, totalPokemons } = db;
-  pokemons.forEach((pokemon) => {
-    if (!pokemonIds.includes(pokemon.id)) {
-      pokemonIds.push(pokemon.id);
-    }
-  });
+  // let { data: pokemons, totalPokemons } = db;
+  // pokemons.forEach((pokemon) => {
+  //   if (!pokemonIds.includes(pokemon.id)) {
+  //     pokemonIds.push(pokemon.id);
+  //   }
+  // });
   // put input validation
+
   let pokemon = {};
   let previousPokemon = {};
   let nextPokemon = {};
@@ -159,61 +160,59 @@ router.get("/:pokemonId", (req, res, next) => {
       let idError = new Error(`This id ${pokemonId} does not exist`);
       idError.statusCode = 401;
       throw idError;
-    } else {
-      // Find the current, previous, and next Pokémon
-      // pokemon = pokemons.find((pokemon) => pokemon.id === newPokemonId);
-      const pokemonIndex = pokemons.findIndex(
-        (pokemon) => pokemon.id === newPokemonId
-      );
-      pokemon = pokemons[pokemonIndex];
-      // //  previous Pokémon when pokemon index is 0
-      if (pokemonIndex === 0) {
-        previousPokemon = pokemons[pokemons.length - 1];
-      } else {
-        previousPokemon = pokemons[pokemonIndex - 1];
-      }
-      // next Pokémon when id is the last one
-      if (pokemonIndex === pokemons.length - 1) {
-        nextPokemon = pokemons[0];
-      } else {
-        nextPokemon = pokemons[pokemonIndex + 1];
-      }
-
-      // //  previous Pokémon when id is 1
-      // if (newPokemonId === 1) {
-      //   previousPokemon = pokemons[pokemons.length - 1];
-      // } else {
-      //   previousPokemon = pokemons.find(
-      //     (pokemon) => pokemon.id === newPokemonId - 1
-      //   );
-      // }
-
-      // // next Pokémon when id is the last one
-      // if (newPokemonId === pokemons[pokemons.length - 1].id) {
-      //   nextPokemon = pokemons[0];
-      // } else {
-      //   nextPokemon = pokemons.find(
-      //     (pokemon) => pokemon.id === newPokemonId + 1
-      //   );
-      // }
-      // let previousIndex =
-      //   (newPokemonId - 1 + pokemons.length) % pokemons.length;
-      // let nextIndex = (newPokemonId + 1) % pokemons.length;
-
-      // let previousPokemon = pokemons[previousIndex];
-      // let nextPokemon = pokemons[nextIndex];
-
-      let responseData = {
-        data: {
-          pokemon,
-          previousPokemon,
-          nextPokemon,
-        },
-      };
-
-      // Send response
-      res.status(200).send(responseData);
     }
+    // Find the current, previous, and next Pokémon
+    // pokemon = pokemons.find((pokemon) => pokemon.id === newPokemonId);
+    const pokemonIndex = pokemons.findIndex(
+      (pokemon) => pokemon.id === newPokemonId
+    );
+    pokemon = pokemons[pokemonIndex];
+    // //  previous Pokémon when pokemon index is 0
+    if (pokemonIndex === 0) {
+      previousPokemon = pokemons[pokemons.length - 1];
+    } else {
+      previousPokemon = pokemons[pokemonIndex - 1];
+    }
+    // next Pokémon when id is the last one
+    if (pokemonIndex === pokemons.length - 1) {
+      nextPokemon = pokemons[0];
+    } else {
+      nextPokemon = pokemons[pokemonIndex + 1];
+    }
+
+    // //  previous Pokémon when id is 1
+    // if (newPokemonId === 1) {
+    //   previousPokemon = pokemons[pokemons.length - 1];
+    // } else {
+    //   previousPokemon = pokemons.find(
+    //     (pokemon) => pokemon.id === newPokemonId - 1
+    //   );
+    // }
+
+    // // next Pokémon when id is the last one
+    // if (newPokemonId === pokemons[pokemons.length - 1].id) {
+    //   nextPokemon = pokemons[0];
+    // } else {
+    //   nextPokemon = pokemons.find(
+    //     (pokemon) => pokemon.id === newPokemonId + 1
+    //   );
+    // }
+    // let previousIndex =
+    //   (newPokemonId - 1 + pokemons.length) % pokemons.length;
+    // let nextIndex = (newPokemonId + 1) % pokemons.length;
+
+    // let previousPokemon = pokemons[previousIndex];
+    // let nextPokemon = pokemons[nextIndex];
+
+    let responseData = {
+      data: {
+        pokemon,
+        previousPokemon,
+        nextPokemon,
+      },
+    };
+    // Send response
+    res.status(200).send(responseData);
   } catch (error) {
     next(error);
   }
@@ -256,7 +255,8 @@ router.post("/", (req, res, next) => {
       throw existedPokemonError;
     }
     pokemons.push(value);
-    // pokemonIds.push(id);
+    pokemonIds.push(id);
+    pokemonNames.push(name);
     totalPokemons += 1;
 
     db = { data: pokemons, totalPokemons };
@@ -289,7 +289,7 @@ router.put("/:pokemonId", (req, res, next) => {
     // check Pokémon can only have one or two types.” (if the types's length is greater than 2)
     // trhow error if happen
     if (error) {
-      error.statusCode = 401;
+      error.statusCode = 404;
       throw error;
     }
     //check the param is correct
@@ -298,13 +298,13 @@ router.put("/:pokemonId", (req, res, next) => {
     // Check if id is a valid number
     if (isNaN(newPokemonId)) {
       let idError = new Error(`Invalid id ${pokemonId}`);
-      idError.statusCode = 400;
+      idError.statusCode = 404;
       throw idError;
     }
     // Check if id exists
     if (!pokemonIds.includes(newPokemonId)) {
       let idError = new Error(`This id ${pokemonId} does not exist`);
-      idError.statusCode = 401;
+      idError.statusCode = 404;
       throw idError;
     }
 
@@ -312,7 +312,7 @@ router.put("/:pokemonId", (req, res, next) => {
     types.forEach((type) => {
       if (!pokemonTypes.includes(type)) {
         const typeError = new Error("This type does not exist");
-        typeError.statusCode = 401;
+        typeError.statusCode = 404;
         throw typeError;
       }
     });
@@ -322,7 +322,7 @@ router.put("/:pokemonId", (req, res, next) => {
       const existedPokemonError = new Error(
         `this pokemon is not existed- Please provide a right name and id`
       );
-      existedPokemonError.statusCode = 401;
+      existedPokemonError.statusCode = 404;
       throw existedPokemonError;
     }
 
