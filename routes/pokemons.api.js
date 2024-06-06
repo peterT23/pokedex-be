@@ -128,14 +128,16 @@ router.get("/:pokemonId", (req, res, next) => {
   let pokemonIds = [];
 
   let db = fs.readFileSync("db.json", "utf-8");
+
   db = JSON.parse(db);
+
   let { data: pokemons, totalPokemons } = db;
   pokemons.forEach((pokemon) => {
     if (!pokemonIds.includes(pokemon.id)) {
       pokemonIds.push(pokemon.id);
     }
   });
-  //put input validation
+  // put input validation
   let pokemon = {};
   let previousPokemon = {};
   let nextPokemon = {};
@@ -254,7 +256,7 @@ router.post("/", (req, res, next) => {
       throw existedPokemonError;
     }
     pokemons.push(value);
-    pokemonIds.push(id);
+    // pokemonIds.push(id);
     totalPokemons += 1;
 
     db = { data: pokemons, totalPokemons };
