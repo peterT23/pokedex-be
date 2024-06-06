@@ -223,14 +223,14 @@ router.post("/", (req, res, next) => {
     // check Pokémon can only have one or two types.” (if the types's length is greater than 2)
     // trhow error if happen
     if (error) {
-      error.statusCode = 401;
+      error.statusCode = 404;
       throw error;
     }
     //check if type is correct
     types.forEach((type) => {
       if (!pokemonTypes.includes(type)) {
         const typeError = new Error("This type does not exist");
-        typeError.statusCode = 401;
+        typeError.statusCode = 404;
         throw typeError;
       }
     });
@@ -240,7 +240,7 @@ router.post("/", (req, res, next) => {
       const existedPokemonError = new Error(
         `this pokemon already exists- Please provide a unique name and id`
       );
-      existedPokemonError.statusCode = 401;
+      existedPokemonError.statusCode = 404;
       throw existedPokemonError;
     }
     pokemons.push(value);
@@ -250,8 +250,9 @@ router.post("/", (req, res, next) => {
     db = { data: pokemons, totalPokemons };
     db = JSON.stringify(db, null, 2);
     fs.writeFileSync("db.json", db);
+    console.log("first", db);
     res
-      .status(201)
+      .status(200)
       .send({ message: "Pokemon created successfully.", pokemon: value });
   } catch (error) {
     next(error);
