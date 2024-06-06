@@ -254,7 +254,7 @@ router.post("/", (req, res, next) => {
       throw existedPokemonError;
     }
     pokemons.push(value);
-
+    pokemonIds.push(id);
     totalPokemons += 1;
 
     db = { data: pokemons, totalPokemons };
