@@ -125,6 +125,16 @@ router.get("/", (req, res, next) => {
  */
 
 router.get("/:pokemonId", (req, res, next) => {
+  let pokemonIds = [];
+
+  let db = fs.readFileSync("db.json", "utf-8");
+  db = JSON.parse(db);
+  let { data: pokemons, totalPokemons } = db;
+  pokemons.forEach((pokemon) => {
+    if (!pokemonIds.includes(pokemon.id)) {
+      pokemonIds.push(pokemon.id);
+    }
+  });
   //put input validation
   let pokemon = {};
   let previousPokemon = {};
