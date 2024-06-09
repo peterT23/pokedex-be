@@ -17,6 +17,10 @@ const schema = Joi.object({
   ability: Joi.array().items(Joi.string()),
 });
 
+const pokemonIdParamsSchema = Joi.object({
+  pokemonId: Joi.number().integer().min(1).required(),
+});
+
 let pokemonTypes = [];
 let pokemonNames = [];
 let pokemonIds = [];
@@ -58,6 +62,7 @@ router.get("/", (req, res, next) => {
     let { page, limit, ...filterQuery } = req.query;
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
+
     let result = [];
 
     const { type, search: name } = filterQuery;
@@ -283,7 +288,13 @@ router.put("/:pokemonId", (req, res, next) => {
   try {
     const { error, value } = schema.validate(req.body);
     const { id, name, types } = value;
-    const { pokemonId } = req.params;
+    // const { pokemonId } = req.params;
+
+    const {
+      error: idErr,
+      value: { pokemonId },
+    } = pokemonIdParamsSchema.validate(req.params);
+
     // using joi validator and setting schema on top to
     //check “Missing required data.” (name, id, types or URL)
     // check Pokémon can only have one or two types.” (if the types's length is greater than 2)
@@ -292,17 +303,14 @@ router.put("/:pokemonId", (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
-    //check the param is correct
-    const newPokemonId = Number(pokemonId); // Convert the id to a number
-
-    // Check if id is a valid number
-    if (isNaN(newPokemonId)) {
-      let idError = new Error(`Invalid id ${pokemonId}`);
-      idError.statusCode = 404;
-      throw idError;
+    if (idErr) {
+      idErr.statusCode = 404;
+      throw idErr;
     }
+    //check the param is correct
+
     // Check if id exists
-    if (!pokemonIds.includes(newPokemonId)) {
+    if (!pokemonIds.includes(pokemonId)) {
       let idError = new Error(`This id ${pokemonId} does not exist`);
       idError.statusCode = 404;
       throw idError;

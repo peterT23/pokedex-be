@@ -9613,16 +9613,7 @@
       "height": "1.7",
       "weight": "195",
       "category": "steam"
-    },
-    {
-      "name": "vinh",
-      "id": 733,
-      "url": "https://pokedex-be-expressjs-nodejs-joivalidator.onrender.com/images/2.png",
-      "types": [
-        "grass",
-        "poison"
-      ]
     }
   ],
-  "totalPokemons": 722
+  "totalPokemons": 721
 }
