@@ -39,34 +39,43 @@ router.get(
   validateSchema(pokemonQuerySchema, "query"),
   (req, res, next) => {
     try {
-      let { page, limit, ...filterQuery } = req.validatedQuery;
+      const { page, limit, ...filterQuery } = req.validatedQuery;
 
-      page = page || 1;
-      limit = limit || 10;
-
-      let result = [];
+      // const result = [];
       const { type, search: name } = filterQuery;
 
       //processing logic
       // number of items skip for selection
       let offset = (page - 1) * limit;
 
-      // filter by type
-      if (type) {
-        result = pokemons.filter((pokemon) =>
-          pokemon.types.includes(type.toLowerCase())
-        );
-      }
-      //filter by name
-      if (name) {
-        result = pokemons.filter((pokemon) =>
-          pokemon.name.toLowerCase().includes(name.toLowerCase())
-        );
-      }
+      // filter by type and name
+
+      const result =
+        !type && !name
+          ? pokemons
+          : pokemons.filter((pokemon) => {
+              const shouldInclude = name ? pokemon.name === name : true;
+              return type
+                ? pokemon.types.include(type) && shouldInclude
+                : shouldInclude;
+            });
+
+      // // filter by type
+      // if (type) {
+      //   result = pokemons.filter((pokemon) =>
+      //     pokemon.types.includes(type.toLowerCase())
+      //   );
+      // }
+      // //filter by name
+      // if (name) {
+      //   result = pokemons.filter((pokemon) =>
+      //     pokemon.name.toLowerCase().includes(name.toLowerCase())
+      //   );
+      // }
       // if no filter, return all pokemons
-      if (!type && !name) {
-        result = pokemons;
-      }
+      // if (!type && !name) {
+      //   result = pokemons;
+      // }
       // return the result
       res.status(200).send({
         data: result.slice(offset, offset + limit),
@@ -224,10 +233,7 @@ router.delete(
       );
       pokemons.splice(pokemonIndex, 1);
       totalPokemons -= 1;
-      // pokemonIds = pokemonIds.filter((id) => id !== pokemonId);
-      // pokemonNames = pokemonNames.filter(
-      //   (name) => name !== pokemons[pokemonIndex].name
-      // );
+
       pokemonIds = pokemonIds.splice(pokemonIndex, 1);
       pokemonNames = pokemonNames.splice(pokemonIndex, 1);
 

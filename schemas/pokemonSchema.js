@@ -20,15 +20,10 @@ const pokemonSchema = Joi.object({
   id: Joi.number().integer().required(),
   url: Joi.string().required(),
   types: Joi.array()
+    .min(1)
     .length(2)
-    .items(
-      Joi.string()
-        .valid(...pokemonTypes)
-        .required(),
-      Joi.string()
-        .valid(...pokemonTypes)
-        .optional()
-    ),
+    .required()
+    .items(Joi.string().valid(...pokemonTypes)),
   description: Joi.string(),
   height: Joi.number(),
   weight: Joi.number(),
@@ -41,8 +36,8 @@ const pokemonIdParamsSchema = Joi.object({
 });
 
 const pokemonQuerySchema = Joi.object({
-  page: Joi.number().integer().min(1),
-  limit: Joi.number().integer().min(10),
+  page: Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(10).default(10),
   type: Joi.string()
     .valid(...pokemonTypes)
     .optional(),

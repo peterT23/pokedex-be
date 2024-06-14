@@ -1,7 +1,5 @@
-// Desc: Middleware to validate request body with Joi schema
+//  Middleware to validate request body with Joi schema
 // */
-
-const Joi = require("joi");
 
 const validateSchema = (schema, property = "body") => {
   return (req, res, next) => {
