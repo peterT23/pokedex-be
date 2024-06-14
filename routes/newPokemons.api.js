@@ -54,10 +54,16 @@ router.get(
         !type && !name
           ? pokemons
           : pokemons.filter((pokemon) => {
-              const shouldInclude = name ? pokemon.name === name : true;
-              return type
-                ? pokemon.types.include(type) && shouldInclude
-                : shouldInclude;
+              // const shouldInclude = name ? pokemon.name === name : true;
+              // return type
+              //   ? pokemon.types.include(type) && shouldInclude
+              //   : shouldInclude;
+
+              const isNameValid = name ? pokemon.name === name : true;
+              const isTypeValid = type
+                ? pokemon.types.includes(type) && isNameValid
+                : isNameValid;
+              return isTypeValid;
             });
 
       // // filter by type
